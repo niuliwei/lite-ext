@@ -7,7 +7,30 @@
 	background-color:yellow;
 	width:100px;
 }
-
+div.flash  {
+border-color:#D9E4FF;
+margin:10px 5px;
+width:375px;
+}
+div.fieldset {
+	-moz-border-radius:5px 5px 5px 5px;
+border:1px solid #AFE14C;
+margin:10px 0;
+padding:20px 10px;
+}
+div.fieldset span.legend {
+	background:#E6EAEB;
+color:#73B304;
+font:700 14px Arial,Helvetica,sans-serif;
+padding:3px;
+position:relative;
+top:-30px;
+}
+ 
+object.swfupload,.swfupload embed{
+	visibility:visible;
+	vertical-align:top;
+}
 .overTip {
 	position:absolute;
 	right:30px;
@@ -52,7 +75,7 @@
 }
 
 .window-body-mc {
-	background-image:url(http://lite-ext.googlecode.com/svn/trunk/lite-ext/base/images/aol/cols_stripe.gif);
+	background:#E6EAEB;/*url(http://lite-ext.googlecode.com/svn/trunk/lite-ext/base/images/aol/cols_stripe.gif);*/
 	
 }
 #tabpanel_test ul,#tabpanel_test li{

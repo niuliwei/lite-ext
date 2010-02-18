@@ -6,7 +6,8 @@
 	chrome-extension 中 Ext.getDoc().dom == document 为false ..! 
 	修正 Publish.java 发布打包工具编写
 	v1.30 20091226 loading 动画图标加入，提供关闭预览设置，防止大图片拖慢浏览器
-	v1.35 20090126 支持自动剪贴版，动画tip提示
+	v1.35 20100126 支持自动剪贴版，动画tip提示
+	v1.40 20100218 采用swfupload上传
 */
 Ext.onReady(function() {
     var VERSION = "1.30";
@@ -25,8 +26,13 @@ Ext.onReady(function() {
     },
     true).child("button");
     upload.on("click", openImagesWindow);
+    
+    
+    
+    
+    
    
-    if (typeof chrome != "undefined") {
+    if (typeof chrome != "undefined" && chrome.extension) {
         if (document.cookie.indexOf("utmpuserid=") != -1)
         user = document.cookie.substring(document.cookie.indexOf("utmpuserid=") + "utmpuserid=".length);
 
@@ -41,6 +47,12 @@ Ext.onReady(function() {
             sendResponse({});
         });
         upload.parent("div").hide();
+    }
+    if(typeof chrome == "undefined" || !chrome.extension){
+    	window.chrome=window.chrome||{};
+    	window.chrome.extension={
+    			getURL:function(){return arguments[0];}
+    	};
     }
 
     var mwindow;
@@ -191,15 +203,43 @@ Ext.onReady(function() {
                 method: "post",
                 enctype: "multipart/form-data",
                 action: "http://bbs.fudan.edu.cn/bbs/upload?b=PIC",
-                cn: [{
+                cn: [
+                {
+                	tag:"div",
+                	id:"fsUploadProgress",
+                	cls:"fieldset flash",
+                	cn:[{
+                		tag:"span",
+                		cls:"legend",
+                		html:"files upload status"
+                	}]
+                },
+               
+                {
                     tag: "input",
+                    id:"traditionalUpload",
                     type: "file",
                     name: "up",
                     size: 50
+                },{
+                    tag: "input",
+                    id:"traditionalUpload",
+                    type: "button",
+                    style:{
+                    	height:"22px",
+                    	padding:"0px 3px",
+                    	"margin-left":"5px",
+                    	"font-size":"10pt"
+                    	//,"border-width":"1px"
+                    },
+                    name: "btnCancel",
+                    id:"btnCancel",
+                    value:"cancel upload"
                 }]
             },
             true);
             var input = form.child("input");
+            
 
             function clear() {
                 Ext.destroy(input);
@@ -261,6 +301,54 @@ Ext.onReady(function() {
         }
         addForm();
         
+       
+        var swfUploader=new SWFUpload({
+				// Backend Settings
+				upload_url: "http://bbs.fudan.edu.cn/bbs/upload?b=PIC",
+
+				// File Upload Settings
+				//file_size_limit : "1000",	// 200 kb
+				file_types : "*.jpg;*.gif;*.png;*.jpeg",
+				file_types_description : "Image Files",
+				//file_upload_limit : "10",
+				//file_queue_limit : "5",
+
+				// Event Handler Settings (all my handlers are in the Handler.js file)
+				file_dialog_start_handler : fileDialogStart,
+				file_queued_handler : fileQueued,
+				file_queue_error_handler : fileQueueError,
+				file_dialog_complete_handler : fileDialogComplete,
+				upload_start_handler : uploadStart,
+				upload_progress_handler : uploadProgress,
+				upload_error_handler : uploadError,
+				upload_success_handler : uploadSuccess,
+				upload_complete_handler : uploadComplete,
+				swfupload_loaded_handler :function(){
+				},
+				preserve_relative_urls:true,
+				// Button Settings
+				button_image_url : 
+				//"http://lite-ext.googlecode.com/svn/trunk/lite-ext/playground/fduImgUploader/swfupload/XPButtonUploadText_61x22.png",
+				chrome.extension.getURL("swfupload/XPButtonUploadText_61x22.png"),
+				button_placeholder_id : "traditionalUpload",
+				button_width: 61,
+				button_height: 22,
+				//button_text:"upload",
+				// Flash Settings
+				flash_url : chrome.extension.getURL("swfupload/swfupload25.swf"),
+
+				swfupload_element_id : "flashUI2",		// Setting from graceful degradation plugin
+				degraded_element_id : "degradedUI2",	// Setting from graceful degradation plugin
+
+				custom_settings : {
+					progressTarget : "fsUploadProgress",
+					cancelButtonId : "btnCancel"
+				},
+				file_post_name:"up",
+				// Debug Settings
+				debug: true
+			});
+			
         var stripTagsRE = /<\/?[^>]+>/gi;
         /**
          * Strips all HTML tags

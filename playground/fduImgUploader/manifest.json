@@ -21,7 +21,10 @@
 	      "js": ["lite-ext/base/javascript/ext-core-min.js", 
 	      "lite-ext/WindowLite/javascript/windowlite.js",
 	      "lite-ext/TabPanelLite/javascript/tabpanel.js",
-	      "imgUploader.js"
+	      "imgUploader.js",
+	      "swfupload/swfupload.js",
+	      "swfupload/fileprogress.js",
+	      "swfupload/handlers.js"
       ],
       "run_at":"document_start"
     }
