@@ -59,7 +59,9 @@ width: 160px;
 .ext-ie .mulTreeContainer ul li .labelText input ,.ext-ie ul.bottomNode li input {
 	margin:0px 4px;
 }
-
+.ext-ie8 ul.bottomNode li input {
+	margin:5px 4px;
+}
 .mulTreeContainer ul li {
 cursor: pointer;
 }
